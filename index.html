@@ -250,54 +250,174 @@
 
 
         // --- INTEGRATION DE L'API DE CHARGEMENT GMOD ---
+        // GMod n'appelle SetFilesNeeded qu'à chaque changement de liste, pas à chaque fichier :
+        // on compte aussi chaque DownloadingFile (workshop + FastDL) pour une barre fidèle.
         let totalFiles = 0;
         let neededFiles = 0;
+        let filesCompleted = 0;
+        let maxProgress = 0;
+        const seenDownloads = new Set();
+        let lastDownloadLabel = "";
+
+        const FINISH_STATUS_KEYS = [
+            "sending client info",
+            "client info sent",
+            "starting lua",
+            "lua started",
+            "loading map",
+            "loaded map",
+            "spawning",
+            "entering game",
+            "workshop complete",
+            "download complete",
+            "all complete"
+        ];
+
+        const NEAR_FINISH_STATUS_KEYS = [
+            "mounted",
+            "mounting",
+            "precache",
+            "initializing game"
+        ];
+
+        function isFinishPhase(status) {
+            const s = (status || "").toLowerCase();
+            return FINISH_STATUS_KEYS.some((key) => s.includes(key));
+        }
+
+        function isNearFinishPhase(status) {
+            const s = (status || "").toLowerCase();
+            return NEAR_FINISH_STATUS_KEYS.some((key) => s.includes(key));
+        }
+
+        function syncCompletedFromNeeded() {
+            if (totalFiles > 0 && neededFiles >= 0) {
+                filesCompleted = Math.max(filesCompleted, totalFiles - neededFiles);
+            }
+        }
+
+        function registerDownload(fileName) {
+            if (!fileName || seenDownloads.has(fileName)) return;
+            seenDownloads.add(fileName);
+            if (totalFiles > 0) {
+                filesCompleted = Math.min(totalFiles, filesCompleted + 1);
+            } else {
+                filesCompleted += 1;
+            }
+        }
+
+        function updateProgress(forcePercent) {
+            let percentage = 0;
+
+            if (typeof forcePercent === "number") {
+                percentage = forcePercent;
+            } else if (totalFiles > 0) {
+                syncCompletedFromNeeded();
+                const fromNeeded = Math.round(((totalFiles - neededFiles) / totalFiles) * 100);
+                const fromCounter = Math.round((filesCompleted / totalFiles) * 100);
+                percentage = Math.max(fromNeeded, fromCounter);
+                if (neededFiles === 0) percentage = 100;
+            } else if (filesCompleted > 0) {
+                // Workshop / téléchargements avant que SetFilesTotal arrive
+                percentage = Math.min(88, 12 + Math.round((filesCompleted / Math.max(filesCompleted + 3, 8)) * 76));
+            }
+
+            percentage = Math.min(100, Math.max(maxProgress, percentage));
+            maxProgress = percentage;
+
+            document.getElementById("progress-bar").style.width = percentage + "%";
+            document.getElementById("percentage").innerHTML = percentage + "%";
+
+            if (totalFiles > 0 && !forcePercent) {
+                const done = Math.min(filesCompleted, totalFiles);
+                const left = Math.max(0, totalFiles - done);
+                if (left > 0 && lastDownloadLabel) {
+                    document.getElementById("filename").innerHTML =
+                        "Ressources : " + done + " / " + totalFiles + " — " + lastDownloadLabel;
+                } else if (totalFiles > 0) {
+                    document.getElementById("filename").innerHTML =
+                        "Ressources : " + done + " / " + totalFiles;
+                }
+            }
+        }
 
         function GameDetails(servername, serverurl, mapname, maxplayers, steamid, gamemode) {
-            document.getElementById('mapname').innerHTML = mapname;
+            document.getElementById("mapname").innerHTML = mapname;
         }
 
         function SetStatusChanged(status) {
-            document.getElementById('status').innerHTML = status;
-            if (status.toLowerCase().includes("sending client info")) {
+            document.getElementById("status").innerHTML = status;
+
+            if (isFinishPhase(status)) {
+                updateProgress(100);
+                return;
+            }
+
+            if (isNearFinishPhase(status)) {
+                updateProgress(Math.max(maxProgress, 96));
+                return;
+            }
+
+            if (totalFiles > 0 && neededFiles === 0) {
                 updateProgress(100);
             }
         }
 
         function SetFilesTotal(total) {
-            totalFiles = total;
+            totalFiles = Math.max(0, parseInt(total, 10) || 0);
+            syncCompletedFromNeeded();
             updateProgress();
         }
 
         function SetFilesNeeded(needed) {
-            neededFiles = needed;
+            neededFiles = Math.max(0, parseInt(needed, 10) || 0);
+            syncCompletedFromNeeded();
+            if (totalFiles > 0 && neededFiles === 0) {
+                filesCompleted = totalFiles;
+            }
             updateProgress();
         }
 
         function DownloadingFile(fileName) {
-            document.getElementById('filename').innerHTML = "Donnée : " + fileName;
+            lastDownloadLabel = fileName;
+            const shortName = fileName.length > 72 ? "…" + fileName.slice(-69) : fileName;
+            document.getElementById("filename").innerHTML = "Donnée : " + shortName;
+            registerDownload(fileName);
+            updateProgress();
         }
 
-        function updateProgress(override) {
-            let percentage = 0;
-            if (override) {
-                percentage = override;
-            } else if (totalFiles > 0) {
-                percentage = Math.round(((totalFiles - neededFiles) / totalFiles) * 100);
-            }
-            document.getElementById('progress-bar').style.width = percentage + "%";
-            document.getElementById('percentage').innerHTML = percentage + "%";
-        }
+        window.GameDetails = GameDetails;
+        window.SetStatusChanged = SetStatusChanged;
+        window.SetFilesTotal = SetFilesTotal;
+        window.SetFilesNeeded = SetFilesNeeded;
+        window.DownloadingFile = DownloadingFile;
 
         if (!navigator.userAgent.includes("GMod")) {
             let p = 0;
+            const demoFiles = [
+                "shinra_core",
+                "shinra_map_pack",
+                "shinra_jutsu_nature",
+                "shinra_kekkei",
+                "shinra_models"
+            ];
+            totalFiles = demoFiles.length;
+            neededFiles = demoFiles.length;
+
             setInterval(() => {
                 if (p < 100) {
                     p++;
-                    updateProgress(p);
-                    if(p === 15) SetStatusChanged("Malaxage du chakra...");
-                    if(p === 50) SetStatusChanged("Lancement de l'illusion...");
-                    if(p === 85) SetStatusChanged("Restauration du parchemin de sceau...");
+                    if (p <= demoFiles.length) {
+                        neededFiles = demoFiles.length - p;
+                        filesCompleted = p;
+                        DownloadingFile(demoFiles[p - 1] || demoFiles[demoFiles.length - 1]);
+                    } else {
+                        updateProgress(p);
+                    }
+                    if (p === 15) SetStatusChanged("Malaxage du chakra...");
+                    if (p === 50) SetStatusChanged("Lancement de l'illusion...");
+                    if (p === 85) SetStatusChanged("Restauration du parchemin de sceau...");
+                    if (p === 98) SetStatusChanged("Sending client info...");
                 }
             }, 60);
         }
