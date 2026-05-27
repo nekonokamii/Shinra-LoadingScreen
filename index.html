@@ -8,9 +8,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Outfit:wght@200;300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --vermillon: #e0533c;
-            --gold: #d97706;
-            --dark-bg: #0b0507;
+            --vermillon: #c9a227;
+            --gold: #d4af37;
+            --dark-bg: #030304;
         }
 
         body {
@@ -18,7 +18,7 @@
             padding: 0;
             overflow: hidden;
             background-color: var(--dark-bg);
-            color: #f3f4f6;
+            color: #f5f2eb;
             font-family: 'Outfit', sans-serif;
             height: 100vh;
             width: 100vw;
@@ -31,9 +31,9 @@
             top: 0; left: 0;
             width: 100%; height: 100%;
             background: 
-                radial-gradient(circle at 50% 30%, rgba(224, 83, 60, 0.08) 0%, transparent 55%),
-                radial-gradient(circle at 50% 80%, rgba(217, 119, 6, 0.04) 0%, transparent 60%),
-                #0b0507;
+                radial-gradient(circle at 50% 30%, rgba(201, 169, 98, 0.08) 0%, transparent 55%),
+                radial-gradient(circle at 50% 80%, rgba(212, 175, 55, 0.04) 0%, transparent 60%),
+                #030304;
             z-index: -2;
         }
 
@@ -64,18 +64,18 @@
 
         /* Effet de lueur dorée/vermillon sur le texte */
         .shinra-title-gradient {
-            background: linear-gradient(to bottom, #ffffff 40%, #ff8975 80%, #e0533c 100%);
+            background: linear-gradient(to bottom, #ffffff 40%, #e8d5a3 80%, #c9a227 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 30px rgba(224, 83, 60, 0.25);
+            text-shadow: 0 0 30px rgba(201, 169, 98, 0.25);
         }
 
         /* Éléments de l'interface en verre trempé (Glassmorphism de luxe) */
         .panel-glass {
-            background: rgba(14, 8, 10, 0.55);
+            background: rgba(8, 8, 10, 0.55);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(224, 83, 60, 0.12);
+            border: 1px solid rgba(201, 169, 98, 0.14);
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
         }
 
@@ -91,15 +91,15 @@
         .progress-fill {
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, #be123c, #e0533c, #f59e0b);
-            box-shadow: 0 0 15px rgba(224, 83, 60, 0.6);
+            background: linear-gradient(90deg, #5c4812, #c9a227, #f0e6c8);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.45);
             transition: width 0.6s cubic-bezier(0.1, 0.8, 0.2, 1);
         }
 
         /* Animation douce de pulsation pour le Kanji */
         @keyframes pulse-kanji {
-            0%, 100% { opacity: 0.85; transform: scale(1); filter: drop-shadow(0 0 15px rgba(224, 83, 60, 0.4)); }
-            50% { opacity: 1; transform: scale(1.05); filter: drop-shadow(0 0 25px rgba(224, 83, 60, 0.7)); }
+            0%, 100% { opacity: 0.85; transform: scale(1); filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.4)); }
+            50% { opacity: 1; transform: scale(1.05); filter: drop-shadow(0 0 25px rgba(212, 175, 55, 0.7)); }
         }
 
         .kanji-glow {
@@ -114,22 +114,22 @@
     <canvas id="embers-canvas"></canvas>
 
     <div class="flex flex-col items-center text-center z-10 flex-shrink-0 min-[1200px]:mt-4">
-        <div class="kanji-glow text-3xl md:text-4xl font-semibold mb-2 md:mb-3 border border-red-500/20 px-4 py-1.5 rounded-lg bg-red-950/20 text-[#e0533c] font-serif tracking-widest">
+        <div class="kanji-glow text-3xl md:text-4xl font-semibold mb-2 md:mb-3 border border-amber-500/20 px-4 py-1.5 rounded-lg bg-amber-950/20 text-[#d4af37] font-serif tracking-widest">
             神
         </div>
         
-        <p class="shinra-serif text-[10px] tracking-[0.4em] text-amber-500/80 uppercase font-semibold mb-1">Bienvenue sur</p>
+        <p class="shinra-serif text-[10px] tracking-[0.4em] text-[#c9a227]/80 uppercase font-semibold mb-1">Bienvenue sur</p>
         <h1 class="shinra-serif shinra-title-gradient text-5xl md:text-8xl font-black tracking-widest leading-none mb-3 md:mb-4">SHINRA</h1>
         
         <div class="flex items-center space-x-4">
-            <div class="h-[1px] w-12 bg-gradient-to-r from-transparent to-red-500/40"></div>
+            <div class="h-[1px] w-12 bg-gradient-to-r from-transparent to-amber-500/40"></div>
             <p class="text-xs tracking-[0.25em] text-gray-400 font-light uppercase">L'expérience Shinobi ultime</p>
-            <div class="h-[1px] w-12 bg-gradient-to-l from-transparent to-red-500/40"></div>
+            <div class="h-[1px] w-12 bg-gradient-to-l from-transparent to-amber-500/40"></div>
         </div>
     </div>
 
     <div class="relative flex-1 w-full max-h-[320px] md:max-h-[420px] min-[1200px]:max-h-[480px] flex items-center justify-center z-10 my-2 border-0 outline-none">
-        <div class="absolute w-full h-full max-w-xl bg-red-600/5 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute w-full h-full max-w-xl bg-amber-500/5 rounded-full blur-3xl pointer-events-none"></div>
         <img src="Shinra-Logo.png" alt="Logo Shinra" class="w-full h-full max-w-xs md:max-w-xl min-[1200px]:max-w-2xl object-contain opacity-85 hover:opacity-100 transition-opacity duration-700 ease-in-out py-2 border-0 outline-none">
     </div>
 
@@ -138,7 +138,7 @@
         <div class="w-full panel-glass rounded-xl p-5 md:p-8 mb-4 md:mb-6">
             <div class="flex justify-between items-end mb-4">
                 <div class="flex flex-col">
-                    <span class="text-[10px] text-amber-500 font-bold tracking-[0.2em] uppercase mb-1">Concentration du Chakra</span>
+                    <span class="text-[10px] text-[#d4af37] font-bold tracking-[0.2em] uppercase mb-1">Concentration du Chakra</span>
                     <span id="status" class="text-sm text-gray-300 font-light">Calcul de la trajectoire gravitationnelle...</span>
                 </div>
                 <span id="percentage" class="text-3xl font-bold text-white italic tracking-tighter">0%</span>
@@ -153,17 +153,17 @@
 
         <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
             <div class="panel-glass rounded-xl p-4 flex flex-col items-center justify-center">
-                <span class="text-[9px] text-red-500/80 uppercase tracking-widest mb-1 font-semibold">Territoire (Map)</span>
+                <span class="text-[9px] text-[#c9a227]/80 uppercase tracking-widest mb-1 font-semibold">Territoire (Map)</span>
                 <span id="mapname" class="shinra-serif text-xs font-bold text-gray-200 tracking-wider">Chargement...</span>
             </div>
 
-            <div class="panel-glass rounded-xl p-4 flex flex-col items-center justify-center border-red-500/30">
-                <span class="text-[9px] text-amber-500 uppercase tracking-widest mb-1 font-semibold">Portail Web</span>
-                <a href="https://shinra-community.fr" target="_blank" class="shinra-serif text-xs font-extrabold text-white tracking-wider hover:text-red-400 transition-colors">shinra-community.fr</a>
+            <div class="panel-glass rounded-xl p-4 flex flex-col items-center justify-center border-amber-500/30">
+                <span class="text-[9px] text-[#d4af37] uppercase tracking-widest mb-1 font-semibold">Portail Web</span>
+                <a href="https://shinra-community.fr" target="_blank" class="shinra-serif text-xs font-extrabold text-white tracking-wider hover:text-[#e8d5a3] transition-colors">shinra-community.fr</a>
             </div>
 
             <div class="panel-glass rounded-xl p-4 flex flex-col items-center justify-center">
-                <span class="text-[9px] text-red-500/80 uppercase tracking-widest mb-1 font-semibold">Ralliement</span>
+                <span class="text-[9px] text-[#c9a227]/80 uppercase tracking-widest mb-1 font-semibold">Ralliement</span>
                 <span class="shinra-serif text-xs font-bold text-gray-200 tracking-wider">discord.gg/shinra</span>
             </div>
         </div>
@@ -200,7 +200,7 @@
                 this.speedY = -(Math.random() * 1.2 + 0.4);
                 this.speedX = Math.random() * 0.6 - 0.3;
                 this.opacity = Math.random() * 0.5 + 0.3;
-                const colors = ['#e0533c', '#ea580c', '#d97706', '#f59e0b'];
+                const colors = ['#6b5416', '#a88420', '#c9a227', '#d4af37'];
                 this.color = colors[Math.floor(Math.random() * colors.length)];
             }
 
